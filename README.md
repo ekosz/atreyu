@@ -45,6 +45,36 @@ component in `<Provider>`.
     callback receives the props for this component. This will only be called
     when `deferRendering` is `true`.
 
+#### Returns
+
+A React component class that injects falcor data and falcor methods into your
+component.
+
+##### Props
+
+* [`data`] *(Object)*: The data that was returned from the falcor query.
+  **Caution**: This propery maybe `undefined` under the follow circumstances:
+  * No query was provided to `withQuery` in the first place.
+  * `deferRendering` is set to false and the query has not finished yet.
+  * An error was thrown during the query and `throwOnError` is `false`. There
+    should be an `error` prop instead.
+* `get` *(Function)*: The
+  [`falcor.Model#get`](https://netflix.github.io/falcor/doc/Model.html#get)
+  function. This can be used to fetch further paths in different life cycle
+  events.
+* `set` *(Function)*: The
+  [`falcor.Model#set`](https://netflix.github.io/falcor/doc/Model.html#set)
+  function. This can be used to set Falcor paths during various events.
+* `call` *(Function)* The
+  [`falcor.Model#call`](https://netflix.github.io/falcor/doc/Model.html#call)
+  function. This can be used to call functions on the Falcor router during
+  various events. If any path invalidations are returned from this call the
+  paths will automatically be refetched if there are any components subscripted
+  to them.
+* [`error`] *(Error)*: If the `throwOnError` option is `false` and there is an
+  error fetching the falcor query, this `error` prop will be set to the error
+  that happened. Otherwise it will always be `undefined`.
+
 ## Basic Examples
 
 ### Example: Static path
