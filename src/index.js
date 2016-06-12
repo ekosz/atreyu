@@ -1,9 +1,7 @@
 import Provider from './Provider';
-import withRoot from './withRoot';
-import withLeaf from './withLeaf';
+import withQuery from './withQuery';
 
 export {
   Provider,
-  withRoot,
-  withLeaf,
+  withQuery,
 };
