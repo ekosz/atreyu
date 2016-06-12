@@ -129,7 +129,7 @@ const UserPage = ({ name, email, company }) =>
 
 export default compose(
   withQuery(props => [
-    ['usersById', props.userId, ['name', 'email]],
+    ['usersById', props.userId, ['name', 'email']],
     ['usersById', props.userId, 'company', 'name'],
   ]),
   mapProps(props => ({
