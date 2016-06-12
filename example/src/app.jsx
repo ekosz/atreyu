@@ -7,6 +7,48 @@ import { Provider, withQuery } from 'atreyu';
 import Todo from './todo.jsx';
 import Footer from './footer.jsx';
 
+const App = (props) =>
+  <div>
+    <header className="header">
+      <h1>todos</h1>
+      <form onSubmit={props.handleCreate}>
+        <input
+          value={props.newTodo}
+          className="new-todo"
+          placeholder="What needs to be done?"
+          autoFocus
+          onChange={props.onChange}
+        />
+      </form>
+    </header>
+    <section className="main">
+      <div>
+        <input className="toggle-all" type="checkbox"/>
+        <label htmlFor="toggle-all">Mark all as complete</label>
+        <ul className="todo-list">
+          {props.todos.map((todo, idx) => (
+            <Todo key={idx} idx={idx} set={props.set} {...todo} />
+          ))}
+        </ul>
+      </div>
+    </section>
+    <Footer
+      filter={props.filter}
+      changeFilter={props.changeFilter}
+      count={props.todos.length}
+    />
+  </div>;
+
+App.propTypes = {
+  todos: PropTypes.array.isRequired,
+  filter: PropTypes.string.isRequired,
+  newTodo: PropTypes.string.isRequired,
+  changeFilter: PropTypes.func.isRequired,
+  handleCreate: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  set: PropTypes.func.isRequired,
+};
+
 const model = new Model({
   cache: {
     todos: {
@@ -33,59 +75,15 @@ const filters = {
   active: todo => !todo.done,
 };
 
-function App(props) {
-  const { todos } = props;
-
+const filterTodos = (filter, todosObj) => {
   const filteredTodos = [];
-  for (let idx = 0; idx < todos.length; idx++) {
-    if (todos[idx] && filters[props.filter](todos[idx])) {
-      filteredTodos.push(todos[idx]);
+  for (let idx = 0; idx < todosObj.length; idx++) {
+    if (todosObj[idx] && filters[filter](todosObj[idx])) {
+      filteredTodos.push(todosObj[idx]);
     }
   }
-
-  return (
-    <div>
-      <header className="header">
-        <h1>todos</h1>
-        <form onSubmit={props.handleCreate}>
-          <input
-            value={props.newTodo}
-            className="new-todo"
-            placeholder="What needs to be done?"
-            autoFocus
-            onChange={props.onChange}
-          />
-        </form>
-      </header>
-      <section className="main">
-        <div>
-          <input className="toggle-all" type="checkbox"/>
-          <label htmlFor="toggle-all">Mark all as complete</label>
-          <ul className="todo-list">
-            {filteredTodos.map((todo, idx) => (
-              <Todo key={idx} idx={idx} set={props.set} {...todo} />
-            ))}
-          </ul>
-        </div>
-      </section>
-      <Footer
-        filter={props.filter}
-        changeFilter={props.changeFilter}
-        count={filteredTodos.length}
-      />
-    </div>
-  );
+  return filteredTodos;
 }
-
-App.propTypes = {
-  todos: PropTypes.object.isRequired,
-  filter: PropTypes.string.isRequired,
-  newTodo: PropTypes.string.isRequired,
-  changeFilter: PropTypes.func.isRequired,
-  handleCreate: PropTypes.func.isRequired,
-  onChange: PropTypes.func.isRequired,
-  set: PropTypes.func.isRequired,
-};
 
 const enhance = compose(
   withState('filter', 'changeFilter', 'all'),
@@ -112,7 +110,7 @@ const enhance = compose(
   }),
   mapProps(props => ({
     ...props,
-    ...props.data,
+    todos: filterTodos(props.filter, props.data.todos),
   }))
 );
 
