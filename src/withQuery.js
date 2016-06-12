@@ -11,7 +11,7 @@ export default function withQuery(query, options = {}) {
   const { deferRendering = true, pure = true, throwOnError = true } = options;
 
   return function wrapWithRoot(WrappedComponent) {
-    const rootDisplayName = `Connect(${getDisplayName(WrappedComponent)})`;
+    const rootDisplayName = `FalcorQuery(${getDisplayName(WrappedComponent)})`;
 
     class Root extends Component {
       constructor(props, context) {
