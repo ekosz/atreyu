@@ -40,6 +40,10 @@ component in `<Provider>`.
   * [`throwOnError = true`] *(Boolean)*: If true, the container will throw an
     error if the fetching from falcor fails. If false, the error will be passed
     down as a prop instead. *Defaults to `true`.*
+  * [`renderLoading`] *(Function)*: If provided, this function will be called
+    while Atreyu waits for the initial Falcor payload to be provided. This
+    callback receives the props for this component. This will only be called
+    when `deferRendering` is `true`.
 
 ## Basic Examples
 
@@ -169,6 +173,29 @@ export default compose(
     ];
   }))
 )(Items);
+```
+
+### Example: Loading message
+
+By default, nothing is rendered while loading data from Falcor for the initial
+render. This behavior can be altered by either settings the option
+`deferRendering` to `false`, in which case the wrapped component will be
+rendered immediately with an `undefined` `data` prop, or using the
+`renderLoading` callback option.
+
+```js
+function Name({ name }) {
+  return <span>{name}</span>;
+}
+
+withQuery(
+  `my["name"]`,
+  {
+    renderLoading: () => (
+      <span>Loading...</span>
+    )
+  }
+)(Name);
 ```
 
 ### Example: Using ES7 decorator syntax

@@ -8,7 +8,7 @@ function getDisplayName(WrappedComponent) {
 }
 
 export default function withQuery(query, options = {}) {
-  const { deferRendering = true, pure = true, throwOnError = true } = options;
+  const { deferRendering = true, pure = true, throwOnError = true, renderLoading } = options;
 
   return function wrapWithRoot(WrappedComponent) {
     const rootDisplayName = `FalcorQuery(${getDisplayName(WrappedComponent)})`;
@@ -74,7 +74,10 @@ export default function withQuery(query, options = {}) {
       }
 
       render() {
-        if (deferRendering && this.state.loading && !this.state.data) return null;
+        if (deferRendering && this.state.loading && !this.state.data) {
+          if (renderLoading) return renderLoading(this.props);
+          return null;
+        }
 
         return <WrappedComponent {...this.props} {...this.falcorProps()} />;
       }
