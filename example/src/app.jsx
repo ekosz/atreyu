@@ -26,9 +26,7 @@ const App = (props) =>
         <input className="toggle-all" type="checkbox"/>
         <label htmlFor="toggle-all">Mark all as complete</label>
         <ul className="todo-list">
-          {props.todos.map((todo, idx) => (
-            <Todo key={idx} idx={idx} set={props.set} {...todo} />
-          ))}
+          {props.todos.map(todo => <Todo key={todo.id} id={todo.id} />)}
         </ul>
       </div>
     </section>
@@ -79,11 +77,26 @@ const filterTodos = (filter, todosObj) => {
   const filteredTodos = [];
   for (let idx = 0; idx < todosObj.length; idx++) {
     if (todosObj[idx] && filters[filter](todosObj[idx])) {
-      filteredTodos.push(todosObj[idx]);
+      filteredTodos.push({ id: idx, ...todosObj[idx] });
     }
   }
   return filteredTodos;
 }
+
+const handleCreate = props => event => {
+  event.preventDefault();
+  props.set({ json: {
+    todos: {
+      length: props.data.todos.length + 1,
+      [props.data.todos.length]: { name: props.newTodo, done: false },
+    },
+  }}).then(() => {});
+  props.setNewTodo('');
+};
+
+const onChange = props => event => {
+  props.setNewTodo(event.target.value);
+};
 
 const enhance = compose(
   withState('filter', 'changeFilter', 'all'),
@@ -94,19 +107,8 @@ const enhance = compose(
     ['todos', { length: props.data.todos.length }, Todo.queries.todo()],
   ]),
   withHandlers({
-    onChange: props => event => {
-      props.setNewTodo(event.target.value);
-    },
-    handleCreate: props => event => {
-      event.preventDefault();
-      props.set({ json: {
-        todos: {
-          length: props.data.todos.length + 1,
-          [props.data.todos.length]: { name: props.newTodo, done: false },
-        },
-      }}).then(() => {});
-      props.setNewTodo('');
-    },
+    onChange,
+    handleCreate,
   }),
   mapProps(props => ({
     ...props,

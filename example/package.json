@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "atreyu": "file:..",
+    "classnames": "^2.2.5",
     "falcor": "^0.1.17",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",

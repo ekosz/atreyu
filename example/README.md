@@ -12,6 +12,6 @@ npm start
 - [x] Listing todos
 - [x] Filtering todos
 - [x] Creating todos
-- [ ] Editing todos
+- [x] Editing todos
 - [ ] Deleting todos
 - [ ] Clearing complete todos
