@@ -12,13 +12,15 @@ export default class Dispatcher {
 
     this.listeners.push(listener);
 
-    return function unsubscribe() {
+    function unsubscribe() {
       if (!isSubscribed) return;
       isSubscribed = false;
 
       const index = this.listeners.indexOf(listener);
       this.listeners.splice(index, 1);
-    };
+    }
+
+    return unsubscribe.bind(this);
   }
 
   dispatch() {
