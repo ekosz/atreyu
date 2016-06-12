@@ -1,107 +1,101 @@
-import React, { PropTypes } from 'react';
-import { compose, withState, mapProps, withHandlers, setStatic } from 'recompose';
+import React, { Component, PropTypes } from 'react';
 import { withQuery } from 'atreyu';
 import classNames from 'classNames';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
+function noop() {}
 
-const Todo = ({
-  todo,
-  editing,
-  editText,
-  toggleDone,
-  handleEdit,
-  handleSubmit,
-  handleChange,
-  handleKeyDown,
-}) =>
-  <li className={classNames({ completed: todo.done, editing })}>
-    <div className="view">
-      <input
-        className="toggle"
-        type="checkbox"
-        checked={todo.done}
-        onChange={toggleDone}
-      />
-      <label onDoubleClick={handleEdit}>{todo.name}</label>
-      <button className="destroy"></button>
-    </div>
-    <input
-      className="edit"
-      value={editText}
-      onBlur={handleSubmit}
-      onChange={handleChange}
-      onKeyDown={handleKeyDown}
-    />
-  </li>;
+class Todo extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editing: false,
+      editText: '',
+    };
+  }
+
+  handleToggle = () => {
+    const { id, set } = this.props;
+
+    set({ path: ['todos', id, 'done'], value: !this.todo.done }).then(noop);
+  };
+
+  handleEdit = () => {
+    this.setState({ editing: true, editText: this.todo.name });
+  };
+
+  handleSubmit = () => {
+    const value = this.state.editText.trim();
+    const { set, id } = this.props;
+
+    if (value) {
+      set({ path: ['todos', id, 'name'], value }).then(noop);
+      this.setState({ editing: false, editText: value });
+    }
+  };
+
+  handleChange = event => {
+    if (this.state.editing) this.setState({ editText: event.target.value });
+  };
+
+  handleKeyDown = event => {
+    if (event.which === ESCAPE_KEY) {
+      this.setState({ editing: false, editText: this.todo.name });
+    } else if (event.which === ENTER_KEY) {
+      this.handleSubmit(event);
+    }
+  };
+
+  get todo() {
+    const { id, data } = this.props;
+
+    return data.todos[id];
+  }
+
+  render() {
+    const { editing, editText } = this.state;
+
+    return (
+      <li className={classNames({ completed: this.todo.done, editing })}>
+        <div className="view">
+          <input
+            className="toggle"
+            type="checkbox"
+            checked={this.todo.done}
+            onChange={this.handleToggle}
+          />
+          <label onDoubleClick={this.handleEdit}>{this.todo.name}</label>
+          <button className="destroy"></button>
+        </div>
+        <input
+          className="edit"
+          value={editText}
+          onBlur={this.handleSubmit}
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}
+        />
+      </li>
+    );
+  }
+}
 
 Todo.propTypes = {
-  todo: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    done: PropTypes.bool.isRequired,
+  id: PropTypes.number.isRequired,
+  data: PropTypes.shape({
+    todos: PropTypes.object.isRequired,
   }).isRequired,
-  editing: PropTypes.bool.isRequired,
-  editText: PropTypes.string.isRequired,
-  toggleDone: PropTypes.func.isRequired,
-  handleEdit: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleKeyDown: PropTypes.func.isRequired,
-};
-
-const toggleDone = props => () => {
-  props.set({
-    path: ['todos', props.id, 'done'],
-    value: !props.todo.done,
-  }).then(() => {});
-};
-
-const handleEdit = props => () => {
-  props.setEditing(true);
-  props.setEditText(props.todo.name);
-};
-
-const handleSubmit = props => () => {
-  const value = props.editText.trim();
-  if (value) {
-    props.set({ path: ['todos', props.id, 'name'], value }).then(() => {});
-    props.setEditing(false);
-    props.setEditText(value);
-  }
-};
-
-const handleChange = props => event => {
-  if (props.editing) props.setEditText(event.target.value);
-};
-
-const handleKeyDown = props => event => {
-  if (event.which === ESCAPE_KEY) {
-    props.setEditText(props.todo.name);
-    props.setEditing(false);
-  } else if (event.which === ENTER_KEY) {
-    props.handleSubmit(event);
-  }
+  set: PropTypes.func.isRequired,
 };
 
 const queries = {
   todo: () => ['name', 'done'],
 };
 
-export default compose(
-  setStatic('queries', queries),
-  withQuery(props => ['todos', props.id, queries.todo()]),
-  mapProps(props => ({
-    ...props,
-    todo: props.data.todos[props.id],
-  })),
-  withState('editing', 'setEditing', false),
-  withState('editText', 'setEditText', ''),
-  withHandlers({ handleSubmit }),
-  withHandlers({
-    toggleDone,
-    handleEdit,
-    handleChange,
-    handleKeyDown,
-  }),
-)(Todo);
+const enhance = withQuery(props => ['todos', props.id, queries.todo()]);
+const EnhancedTodo = enhance(Todo);
+
+EnhancedTodo.queries = queries;
+
+export default EnhancedTodo;
