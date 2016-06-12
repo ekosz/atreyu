@@ -115,6 +115,12 @@ export default withQuery(props => ([
 
 ### Example: Delegating paths to children
 
+Often we will split up our presentation components into small reusable chunks.
+This is good a practice, but it means the components that do the querying must
+know all of the properties that are used in the components below them. To help
+fix this we can delegate path properties to our child components using static
+properties on the components themselves. This is mechanism that Relay uses.
+
 ```js
 // In InfoBar.js
 function InfoBar({ status }) {
@@ -143,6 +149,9 @@ export default withQuery(props => ([
   ['usersById', props.userId, ['name', 'email'].concat(InfoBar.queries.user())]
 ]))(UserPage);
 ```
+
+This is only one way of doing this. Feel free to come up with your own
+convention.
 
 ### Example: Combining with recompose
 
