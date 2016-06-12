@@ -23,6 +23,7 @@ export default function withQuery(query, options = {}) {
         this.state = {
           loading: true,
           data: null,
+          error: undefined,
         };
       }
 
@@ -55,10 +56,12 @@ export default function withQuery(query, options = {}) {
 
         this.setState({ loading: true }, () => {
           this.falcor.get(...paths)
-            .then(res => { this.setState({ loading: false, data: res && res.json }); })
+            .then(res => {
+              this.setState({ error: undefined, loading: false, data: res && res.json });
+            })
             .catch(error => {
               if (throwOnError) throw error;
-              this.setState({ error, loading: false });
+              this.setState({ error, loading: false, data: null });
             });
         });
       }
