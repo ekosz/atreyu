@@ -3,5 +3,4 @@
 node_modules
 dist
 lib
-es
-coverage
+example/public/index.js
