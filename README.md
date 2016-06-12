@@ -46,21 +46,21 @@ component in `<Provider>`.
 
 ### Example: Static path
 
-```js
+```jsx
+import { withQuery } from 'atreyu';
+
 function Avatar({ size = 100, data: { name, email, avatarUrl } }) {
   if (avatarUrl) return <img width="100" src={avatarUrl} alt={name} />
 
   return <Gravatar alt={name} size={size} email={email} />;
 }
 
-export default withQuery(
-  ['my', ['name', 'email', 'avatarUrl']],
-)(Avatar);
+export default withQuery(['my', ['name', 'email', 'avatarUrl']])(Avatar);
 ```
 
 ### Example: Graph syntax
 
-```js
+```jsx
 function Logo({ size = 100, data }) {
   if (!data) return <span>Loading...</span>;
 
@@ -129,7 +129,7 @@ function UserPage({ userId, data: { usersById }}) {
 }
 
 export default withQuery(props => ([
-  ['usersById', props.userId, ['name, 'email'].concat(InfoBar.queries.user())]
+  ['usersById', props.userId, ['name', 'email'].concat(InfoBar.queries.user())]
 ]))(UserPage);
 ```
 
