@@ -4,8 +4,8 @@ import { Model } from 'falcor';
 import { compose, withState, withHandlers, mapProps } from 'recompose';
 import { Provider, withQuery } from 'atreyu';
 
-import Todo from './todo.jsx';
-import Footer from './footer.jsx';
+import Todo from './todo';
+import Footer from './footer';
 
 const App = (props) =>
   <div>
