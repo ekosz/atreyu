@@ -38,8 +38,8 @@ component in `<Provider>`.
     a component until the initial data comes back from Falcor. Until then the
     component will `return null;` *Defaults to `true`.*
   * [`throwOnError = true`] *(Boolean)*: If true, the container will throw an
-    error if the fetching from falcor fails. If false, the error will be passed
-    down as a prop instead. *Defaults to `true`.*
+    error if the fetching from falcor fails. If `false`, the error will be
+    passed down as a prop instead. *Defaults to `true`.*
   * [`renderLoading`] *(Function)*: If provided, this function will be called
     while Atreyu waits for the initial Falcor payload to be provided. This
     callback receives the props for this component. This will only be called
@@ -55,7 +55,7 @@ component.
 * [`data`] *(Object)*: The data that was returned from the falcor query.
   **Caution**: This propery maybe `undefined` under the follow circumstances:
   * No query was provided to `withQuery` in the first place.
-  * `deferRendering` is set to false and the query has not finished yet.
+  * `deferRendering` is set to `false` and the query has not finished yet.
   * An error was thrown during the query and `throwOnError` is `false`. There
     should be an `error` prop instead.
 * `get` *(Function)*: The
