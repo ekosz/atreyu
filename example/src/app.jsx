@@ -38,7 +38,7 @@ function App(props) {
 
   const filteredTodos = [];
   for (let idx = 0; idx < todos.length; idx++) {
-    if (filters[props.filter](todos[idx])) {
+    if (todos[idx] && filters[props.filter](todos[idx])) {
       filteredTodos.push(todos[idx]);
     }
   }
@@ -91,13 +91,22 @@ const enhance = compose(
   withState('filter', 'changeFilter', 'all'),
   withState('newTodo', 'setNewTodo', ''),
   withQuery(['todos', 'length']),
-  withQuery(props => ['todos', { length: props.data.todos.length }, Todo.queries.todo()]),
+  withQuery(props => [
+    ['todos', 'length'],
+    ['todos', { length: props.data.todos.length }, Todo.queries.todo()],
+  ]),
   withHandlers({
     onChange: props => event => {
       props.setNewTodo(event.target.value);
     },
-    handleCreate: props => () => {
-      props.call(['todos', 'add'], [props.newTodo]);
+    handleCreate: props => event => {
+      event.preventDefault();
+      props.set({ json: {
+        todos: {
+          length: props.data.todos.length + 1,
+          [props.data.todos.length]: { name: props.newTodo, done: false },
+        },
+      }}).then(() => {});
       props.setNewTodo('');
     },
   }),

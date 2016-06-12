@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 const Todo = ({ idx, name, done, set }) =>
   <li className={done ? 'completed' : ''}>
@@ -7,12 +7,19 @@ const Todo = ({ idx, name, done, set }) =>
         className="toggle"
         type="checkbox"
         checked={done}
-        onClick={() => set(['todos', idx, 'done'], !done).then(() => {})}
+        onChange={() => set({ path: ['todos', idx, 'done'], value: !done }).then(() => {})}
       />
       <label>{name}</label>
       <button className="destroy"></button>
     </div>
   </li>;
+
+Todo.propTypes = {
+  idx: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  done: PropTypes.bool.isRequired,
+  set: PropTypes.func.isRequired,
+};
 
 Todo.queries = {
   todo: () => ['name', 'done'],

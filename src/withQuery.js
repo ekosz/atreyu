@@ -67,9 +67,9 @@ export default function withQuery(query, options = {}) {
         return {
           error: this.state.error,
           data: this.state.data,
-          get: this.falcor.get,
-          set: this.falcor.set,
-          call: this.falcor.call,
+          get: this.falcor.get.bind(this.falcor),
+          set: this.falcor.set.bind(this.falcor),
+          call: this.falcor.call.bind(this.falcor),
         };
       }
 
