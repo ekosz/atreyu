@@ -7,7 +7,7 @@ export default class Provider extends Component {
     super(props, context);
     this.falcor = props.falcor;
     this.dispatcher = new Dispatcher();
-    this.falor.onChange(this.dispatcher.dispatch);
+    this.falcor.onChange(this.dispatcher.dispatch);
   }
 
   getChildContext() {
