@@ -4,6 +4,7 @@
   "scripts": {
     "start": "npm run build && npm run static",
     "build": "browserify src/app.jsx -t [ babelify --presets [ es2015 react stage-2 ] ] -o public/index.js -d",
+    "watch": "watchify src/app.jsx -t [ babelify --presets [ es2015 react stage-2 ] ] -o public/index.js -d",
     "static": "static public"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "babel-preset-stage-2": "^6.5.0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
-    "node-static": "^0.7.7"
+    "node-static": "^0.7.7",
+    "watchify": "^3.7.0"
   }
 }
