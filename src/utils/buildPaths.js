@@ -1,15 +1,10 @@
-import fromGraphString from 'falcor-graph-syntax';
 import FalcorPathSyntax from 'falcor-path-syntax';
 
 export default function buildPaths(query, props) {
   if (typeof query === 'function') return buildPaths(query(props));
 
   if (typeof query === 'string') {
-    try {
-      return fromGraphString(query);
-    } catch (error) {
-      return [FalcorPathSyntax.fromPath(query)];
-    }
+    return [FalcorPathSyntax.fromPath(query)];
   }
 
   if (Array.isArray(query)) {

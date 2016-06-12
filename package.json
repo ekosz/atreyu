@@ -68,7 +68,6 @@
     "webpack": "^1.13.1"
   },
   "dependencies": {
-    "falcor-graph-syntax": "^1.1.3",
     "falcor-path-syntax": "^0.2.4"
   },
   "peerDependencies": {

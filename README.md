@@ -25,10 +25,9 @@ component in `<Provider>`.
   fetch this query from its Falcor source on mount and prop update. The query
   can be a single [falcor
   path](https://netflix.github.io/falcor/documentation/paths.html) or an array
-  of them. The string can also be a [falcor graph
-  string](https://github.com/giovannicalo/falcor-graph-syntax) if preferred. If
-  a function is given, it will be called with the current props and expects to
-  get a path or pathSet back. See below for examples of different queries.
+  of them. If a function is given, it will be called with the current props and
+  expects to get a path or pathSet back. See below for examples of different
+  queries.
 * [`options`] *(Object)*
   * [`pure = true`] *(Boolean)*: If true, implements `shouldComponentUpdate`
     and shallowly compares the incoming data, preventing unnecessary updates,
@@ -55,29 +54,7 @@ function Avatar({ size = 100, data: { name, email, avatarUrl } }) {
   return <Gravatar alt={name} size={size} email={email} />;
 }
 
-export default withQuery(['my', ['name', 'email', 'avatarUrl']])(Avatar);
-```
-
-### Example: Graph syntax
-
-```jsx
-function Logo({ size = 100, data }) {
-  if (!data) return <span>Loading...</span>;
-
-  const { name, company } = data;
-  return (
-    <div>
-      {name}'s Logo - <img src={company.logoUrl} alt={company.name} />
-    </div>
-  );
-}
-
-export default withQuery(`
-  my {
-    name
-    company { name, logoUrl }
-  }
-`, { deferRendering: false })(Avatar);
+export default withQuery(`my["name", "email", "avatarUrl"]`)(Avatar);
 ```
 
 ### Example: Dynamic paths
@@ -151,12 +128,10 @@ const UserPage = ({ name, email, company }) =>
   </div>
 
 export default compose(
-  withQuery(props => `
-    usersById(id: ${props.userId}) {
-      name, email
-      company { name }
-    }
-  `),
+  withQuery(props => [
+    ['usersById', props.userId, ['name', 'email]],
+    ['usersById', props.userId, 'company', 'name'],
+  ]),
   mapProps(props => ({
     ...props.data.usersById[props.userId],
   }))
@@ -188,10 +163,10 @@ export default compose(
   withQuery(['items', 'length']),
   withQuery(props => ({
     const length = props.data.items.length;
-    return `
-      items { length }
-      items(length: ${length}) { ${Item.queries.item().join(',')} }
-    `;
+    return [
+      ['items', 'length'],
+      ['items', { length }, Item.queries.item()]
+    ];
   }))
 )(Items);
 ```
