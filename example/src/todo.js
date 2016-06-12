@@ -48,6 +48,7 @@ class Todo extends Component {
     }
   };
 
+  // Create a helper method to quickly access our local todo
   get todo() {
     const { id, data } = this.props;
 
@@ -89,6 +90,10 @@ Todo.propTypes = {
   set: PropTypes.func.isRequired,
 };
 
+// To be relay(esk) we can define the properties that we use inside our inner
+// components. Then our outer containers can use these queries to (pre)fetch
+// the data we need to render these components. These gives you the advantage
+// of defining the data you need in the same place that its used.
 const queries = {
   todo: () => ['name', 'done'],
 };
@@ -96,6 +101,8 @@ const queries = {
 const enhance = withQuery(props => ['todos', props.id, queries.todo()]);
 const EnhancedTodo = enhance(Todo);
 
+// Becuase we're exporting the EnhancedTodo component and not the underlining
+// Todo, we must attach our static properties to it instead.
 EnhancedTodo.queries = queries;
 
 export default EnhancedTodo;

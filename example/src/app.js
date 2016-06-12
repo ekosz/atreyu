@@ -24,8 +24,13 @@ class App extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    // `this.props.data` is injected by `withQuery`. It provides the results of
+    // our Falcor query
     const todos = this.props.data.todos;
 
+    // `this.props.set` is injected by `withQuery`. It can be used to set paths
+    // in Falcor. Because set returns a Promise we must chain an empty
+    // function to trigger it.
     this.props.set({ json: {
       todos: {
         length: todos.length + 1,
@@ -43,6 +48,8 @@ class App extends Component {
     this.setState({ filter });
   }
 
+  // These types of getters can be usefull to transform objects returned by
+  // Falcor to arrays that can be iterated over in our `render` functions
   get filteredTodos() {
     const filter = this.state.filter;
     const todosObj = this.props.data.todos;
@@ -97,6 +104,8 @@ App.propTypes = {
   set: PropTypes.func.isRequired,
 };
 
+// For this example our falcor Model is 100% local using Falcor's cache. In
+// production this would point to a Falcor router running on some server.
 const model = new Model({
   cache: {
     todos: {
@@ -117,6 +126,10 @@ const model = new Model({
   },
 });
 
+// Without using a `compose` function from something like `redux` or
+// `recompose` we can construct our own like this. This will preform two
+// queries. The first will get the todo's length, then the second one will use
+// the result of the first query to grab the content of that many todos.
 const enhance = (Comp) => (
   withQuery(['todos', 'length'])(
     withQuery(props => [
@@ -126,6 +139,8 @@ const enhance = (Comp) => (
   )
 );
 
+// We must put our `Provider` component at the top of the tree so that our
+// `withQuery` hocs have access to the falcor model.
 ReactDOM.render(
   <Provider falcor={model} children={React.createElement(enhance(App))} />,
   document.querySelector('#todoapp')
