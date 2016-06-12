@@ -1,9 +1,27 @@
-'use strict';
+'use strict'
 
 var webpack = require('webpack')
-
 var env = process.env.NODE_ENV
+
+var reactExternal = {
+  root: 'React',
+  commonjs2: 'react',
+  commonjs: 'react',
+  amd: 'react'
+}
+
+var falcorExternal = {
+  root: 'Falcor',
+  commonjs2: 'falcor',
+  commonjs: 'falcor',
+  amd: 'falcor'
+}
+
 var config = {
+  externals: {
+    'react': reactExternal,
+    'falcor': falcorExternal
+  },
   module: {
     loaders: [
       { test: /\.js$/, loaders: ['babel-loader'], exclude: /node_modules/ }
@@ -14,12 +32,12 @@ var config = {
     libraryTarget: 'umd'
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env)
     })
   ]
-};
+}
 
 if (env === 'production') {
   config.plugins.push(
@@ -28,6 +46,7 @@ if (env === 'production') {
         pure_getters: true,
         unsafe: true,
         unsafe_comps: true,
+        screw_ie8: true,
         warnings: false
       }
     })
